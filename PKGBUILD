@@ -1,18 +1,20 @@
-# $Id$
-# Maintainer: Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
-# Maintainer: Sébastien Luttringer
+# Maintainer: Fuhd
+# Contributor: Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
+# Contributor: Sébastien Luttringer
 # Contributor: Sergej Pupykin <pupykin.s+arch@gmail.com>
 # Contributor: Miroslaw Szot <mss@czlug.icis.pcz.pl>
 # Contributor: Daniel Micay <danielmicay@gmail.com>
 
-pkgname=nginx
+pkgname=nginx-rtmp
 pkgver=1.10.2
 pkgrel=1
-pkgdesc='Lightweight HTTP server and IMAP/POP3 proxy server'
+pkgdesc='Lightweight HTTP server and IMAP/POP3 proxy server with RTMP support'
 arch=('i686' 'x86_64')
 url='https://nginx.org'
 license=('custom')
-depends=('pcre' 'zlib' 'openssl' 'geoip')
+provides=('nginx')
+conflicts=('nginx')
+depends=('pcre' 'zlib' 'openssl' 'geoip' 'ffmpeg')
 makedepends=('hardening-wrapper')
 backup=('etc/nginx/fastcgi.conf'
         'etc/nginx/fastcgi_params'
@@ -26,11 +28,13 @@ backup=('etc/nginx/fastcgi.conf'
         'etc/logrotate.d/nginx')
 install=nginx.install
 source=($url/download/nginx-$pkgver.tar.gz{,.asc}
+	https://github.com/sergey-dryabzhinsky/nginx-rtmp-module/archive/dev.zip
         service
         logrotate)
 validpgpkeys=('B0F4253373F8F6F510D42178520A9993A1C052F8') # Maxim Dounin <mdounin@mdounin.ru>
 md5sums=('e8f5f4beed041e63eb97f9f4f55f3085'
          'SKIP'
+	 'SKIP'
          '5dd4d09914a4403b9df778ec1d66167c'
          '19a26a61c8afe78defb8b4544f79a9a0')
 
@@ -61,6 +65,10 @@ _common_flags=(
 )
 
 _stable_flags=(
+)
+
+_module_flags=(
+  --add-module=$srcdir/nginx-rtmp-module-dev
 )
 
 build() {
