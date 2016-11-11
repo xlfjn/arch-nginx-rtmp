@@ -5,6 +5,7 @@
 # Contributor: Miroslaw Szot <mss@czlug.icis.pcz.pl>
 # Contributor: Daniel Micay <danielmicay@gmail.com>
 
+_pkgname=nginx
 pkgname=nginx-rtmp
 pkgver=1.10.2
 pkgrel=1
@@ -27,13 +28,11 @@ backup=('etc/nginx/fastcgi.conf'
         'etc/nginx/win-utf'
         'etc/logrotate.d/nginx')
 install=nginx.install
-source=($url/download/nginx-$pkgver.tar.gz{,.asc}
+source=($url/download/nginx-$pkgver.tar.gz
 	https://github.com/sergey-dryabzhinsky/nginx-rtmp-module/archive/dev.zip
         service
         logrotate)
-validpgpkeys=('B0F4253373F8F6F510D42178520A9993A1C052F8') # Maxim Dounin <mdounin@mdounin.ru>
 md5sums=('e8f5f4beed041e63eb97f9f4f55f3085'
-         'SKIP'
 	 'SKIP'
          '5dd4d09914a4403b9df778ec1d66167c'
          '19a26a61c8afe78defb8b4544f79a9a0')
@@ -72,7 +71,7 @@ _module_flags=(
 )
 
 build() {
-  cd $pkgname-$pkgver
+  cd $_pkgname-$pkgver
 
   ./configure \
     --prefix=/etc/nginx \
@@ -90,13 +89,14 @@ build() {
     --http-scgi-temp-path=/var/lib/nginx/scgi \
     --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
     ${_common_flags[@]} \
-    ${_stable_flags[@]}
+    ${_stable_flags[@]} \
+    ${_module_flags[@]}
 
   make
 }
 
 package() {
-  cd $pkgname-$pkgver
+  cd $_pkgname-$pkgver
   make DESTDIR="$pkgdir" install
 
   sed -e 's|\<user\s\+\w\+;|user html;|g' \
